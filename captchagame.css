@@ -1,0 +1,12 @@
+#home-page{
+	font-family:sans-serif;
+	text-align: center;
+}
+h1{
+	color: purple;
+	padding: 10px;
+	font-family: Didot;
+}
+#category{
+	font-size: 20px;
+}
