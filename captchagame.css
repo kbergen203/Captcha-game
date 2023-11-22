@@ -7,6 +7,18 @@ h1{
 	padding: 10px;
 	font-family: Didot;
 }
+#image1{
+	width: 100px;
+}
+#image2{
+	width: 100px;
+}
+#image3{
+	width: 100px;
+}
+#image4{
+	width: 100px;
+}
 #category{
 	font-size: 20px;
 }
