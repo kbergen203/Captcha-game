@@ -7,7 +7,7 @@
     
   </head>
   <body onload = "displayImages()">
-	  <h1>Round 1</h1>
+	  <h1 id = "round">Round 1</h1>
 	  <h3 id = "category-selected"></h3>
 	  <div id="clockdiv">
 			<div>
@@ -22,5 +22,7 @@
 			<img id = "image4" alt = "Image 4" src = "parrot.png" onclick = "imageSelected(this)">
 		</div>
 		<script src = "captchagame.js"></script>
+		<p id = "end-game-message"></p>
+		<button id = "reset">Reset</button>
   </body>
 </html>

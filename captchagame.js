@@ -1,68 +1,58 @@
-var categoryName = "test";
 var imageSelected = []; 
-var animal1 = ["parrot.png", "panda.jpg", "tree.jpg", "tree.jpg"]; 
+var categoryName = ["Animals"];
+var imageRound1 = ["parrot.png", "panda.jpg", "tree.jpg", "tree.jpg"]; 
 var imageLocation = []; //saves location of image corresponding to the location in animal[]. will display in order of order in imageLocation
 //first half of array will be real animals, 2nd half will be not animals
 //this way we can find whether element is an animal or not by using array.length/2>num in the future
-
+var round = 0;
 function startGame()
 {
-	selectElement = document.querySelector('#categoryMenu');
-        categoryName = selectElement.value;
         for(let i=0;i<9;i++)
         {
 			imageSelected[i] = false;
 		}
-		
-	//categoryName = document.getElementById('#categoryMenu').innerHTML; //doesn't work
 	location.replace('CaptchaGame.html'); 
 }
 
 function displayImages()
 {
-	let currentImage = "image";
+	round++;
+	document.getElementById('round').innerHTML = "Round "+round;
+	document.getElementById('category-selected').innerHTML = "Current Category: "+categoryName[round-1];
 	let realCount = 0;
-	let fakeCount = 0;
-	for(let i=0;i<animal1.length;i++)
+	for(let i=0;i<imageRound1.length;i++)
 	{
-		if(realCount < animal1.length/2-1 && Math.floor(Math.random() * 2) == 0) //is real animal - 50/50 odd of being real or not
+		if(realCount < imageRound1.length/2 && Math.floor(Math.random() * 2) == 0) //is real animal - 50/50 odd of being real or not
 		{
-			let randomImageNum = Math.floor(Math.random()*(animal1.length/2)); //first half of array is all real animals
-			let uniqueNumber = false;
-			while(!uniqueNumber)
+			let randomImageNum = Math.floor(Math.random()*(imageRound1.length/2)); //first half of array is all real animals
+			while(imageLocation.includes(randomImageNum)) 
 			{
-				uniqueNumber = true;
-				for(let j=0;j<imageLocation.length; j++)
-				{
-					if(imageLocation[j] == randomImageNum)//if image is already displayed on grid
-					{
-						uniqueNumber = false;
-					}
-				}
-			}
+                randomImageNum = Math.floor(Math.random()*(imageRound1.length/2));
+            }
 			imageLocation[i] = randomImageNum;
-			document.getElementById("image"+(i+1)).src = animal1[randomImageNum]; //make inclusive for all categories later
+			document.getElementById("image"+(i+1)).src = imageRound1[randomImageNum]; //make inclusive for all categories later
 			realCount++;
 		}
 		else
 		{
-			let randomImageNum = Math.floor(Math.random()*(animal1.length/2))+animal1.length/2; //2nd half of array is all fake animals
-			let uniqueNumber = false;
-			while(!uniqueNumber)
+			let randomImageNum = Math.floor(Math.random()*(imageRound1.length/2))+imageRound1.length/2; //2nd half of array is all fake animals
+			while(imageLocation.includes(randomImageNum)) 
 			{
-				uniqueNumber = true;
-				for(let j=0;j<imageLocation.length; j++)
-				{
-					if(imageLocation[j] == randomImageNum)//if image is already displayed on grid
-					{
-						uniqueNumber = false;
-					}
-				}
-			}
+                randomImageNum = Math.floor(Math.random()*(imageRound1.length/2))+imageRound1.length/2;
+            }
 			imageLocation[i] = randomImageNum;
-			document.getElementById("image"+(i+1)).src = animal1[randomImageNum]; //make inclusive for all categories later
+			document.getElementById("image"+(i+1)).src = imageRound1[randomImageNum]; //make inclusive for all categories later
 		}
 	}
+}
+
+function resetGame()
+{
+	document.getElementById('end-game-message').innerHTML = "";
+	document.getElementById("reset").style.display = "none";
+	round = 0;
+	//reset timer
+	displayImages();
 }
 
 function imageSelected(element)
@@ -87,8 +77,6 @@ function getTimeRemaining(endtime)
 
 function initializeClock(id, endtime)
 {
-	document.querySelector('#category-selected').textContent = "Category selected: "+categoryName;
-	//document.getElementById('category-selected').innerHTML= "Category selected: "+categoryName;
 	let clock = document.getElementById(id);
 	let secondsSpan = clock.querySelector('.seconds');
 
@@ -100,7 +88,8 @@ function initializeClock(id, endtime)
 		if (t.total <= 0)
 		{
 			clearInterval(timeinterval); 
-			//add method call that will change to end game status
+			document.getElementById('end-game-message').innerHTML = "Time's up! You've completed "+(round-1)+" captchas in 60 seconds! Try again?";
+			document.getElementById("reset").style.display = "block";
 		}
 	}
 	updateClock();

@@ -22,3 +22,6 @@ h1{
 #category{
 	font-size: 20px;
 }
+#reset{
+	display: none;
+}
