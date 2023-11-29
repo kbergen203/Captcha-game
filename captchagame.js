@@ -57,14 +57,11 @@ function resetGame()
 
 function imageSelected(element)
 {
-	/*
-	 * //unfinished - will check against array of ints to see if this id is part of the correct set of images
-	let str = element.id;
-	if(str.substring(0,str.length-2).parseInt() == ) 
-	{
-		
-	}
-	* */
+
+}
+
+function border() {
+  document.getElementById("image4").style.border = "5px solid blue";
 }
 
 function getTimeRemaining(endtime) 
