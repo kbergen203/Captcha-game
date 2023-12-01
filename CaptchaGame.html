@@ -13,16 +13,28 @@
 			<div>
 				<span class="seconds"></span>
 				<div>Seconds Remaining</div>
+				<br>
 			</div>
 		</div>
 		<div>
-			<img id = "image1" alt = "Image 1" src = "parrot.png" onclick = "imageSelected(this)">
-			<img id = "image2" alt = "Image 2" src = "parrot.png" onclick = "imageSelected(this)">
-			<img id = "image3" alt = "Image 3" src = "parrot.png" onclick = "imageSelected(this)">
-			<img id = "image4" alt = "Image 4" src = "parrot.png" onclick = "imageSelected(this)">
-		</div>
+			<input type = "image" id = "image1" alt = "Image 1" src = "parrot.png" onclick = "imageClicked(this.id)">
+			<input type = "image" id = "image2" alt = "Image 2" src = "parrot.png" onclick = "imageClicked(this.id)">
+			<input type = "image" id = "image3" alt = "Image 3" src = "parrot.png" onclick = "imageClicked(this.id)">
+			<br>
+			<input type = "image" id = "image4" alt = "Image 4" src = "parrot.png" onclick = "imageClicked(this.id)">
+			<input type = "image" id = "image5" alt = "Image 5" src = "parrot.png" onclick = "imageClicked(this.id)">
+			<input type = "image" id = "image6" alt = "Image 6" src = "parrot.png" onclick = "imageClicked(this.id)">
+			<br>
+			<input type = "image" id = "image7" alt = "Image 7" src = "parrot.png" onclick = "imageClicked(this.id)">
+			<input type = "image" id = "image8" alt = "Image 8" src = "parrot.png" onclick = "imageClicked(this.id)">
+			<input type = "image" id = "image9" alt = "Image 9" src = "parrot.png" onclick = "imageClicked(this.id)">
+			<br>
+		</div>	
 		<script src = "captchagame.js"></script>
+		<button onclick = "submitCaptcha()">Submit Captcha</button>
+		<p id = "correct-or-incorrect"></p>
 		<p id = "end-game-message"></p>
-		<button id = "reset">Reset</button>
+		<button id = "reset" onclick = "resetGame()">Reset</button>
+		<button id = "homepage">Homepage</button>
   </body>
 </html>

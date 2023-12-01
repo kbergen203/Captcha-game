@@ -8,20 +8,45 @@ h1{
 	font-family: Didot;
 }
 #image1{
-	width: 100px;
+	width: 150px;
 }
 #image2{
-	width: 100px;
+	width: 150px;
 }
 #image3{
-	width: 100px;
+	width: 150px;
 }
 #image4{
-	width: 100px;
+	width: 150px;
+}
+#image5{
+	width: 150px;
+}
+#image6{
+	width: 150px;
+}
+#image7{
+	width: 150px;
+}
+#image8{
+	width: 150px;
+}
+#image9{
+	width: 150px;
 }
 #category{
 	font-size: 20px;
 }
 #reset{
 	display: none;
+}
+#homepage{
+	display: none;
+}
+#myDiv{
+	width: 150px;
+	height: 100px;
+}
+#buttonStyle{
+
 }
