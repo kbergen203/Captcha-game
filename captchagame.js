@@ -1,9 +1,10 @@
 var imageSelected = []; 
-var categoryName = ["Animals"];
-var imageRound1 = ["parrot.png", "panda.jpg", "arctic fox.jpg", "bird.jpg", "chameleon.jpg", "tree.jpg", "branches.jpg", "tree 2.jpg", "branches.jpg", "tree 2.jpg"]; 
+var categoryName = ["Animals", "Modes of Transportation", "", "", "", "", "", "", "", ""];
+var imageRound1 = ["parrot.png", "panda.jpg", "arctic fox.jpg", "bird.jpg", "chameleon.jpg", "tree.jpg", "branches.jpg", "tree 2.jpg", "jungle.png", "snow.png"]; 
+var imageRound2 = ["car.png", "ferry.png", "plane.png", "train.png", "bus.png", "empty road.png", "cloudy sky.png", "tire.png", "pier.png", "railroad crossing.png"]; 
+var allImageArrays = [imageRound1, imageRound2];
 var imageLocation = []; //saves location of image corresponding to the location in animal[]. will display in order of order in imageLocation
-//first half of array will be real animals, 2nd half will be not animals
-//this way we can find whether element is an animal or not by using array.length/2>num in the future
+//first half of array will be real images, 2nd half will be not part of category
 var round = 0;
 var lives = 3;
 var timeInterval;
@@ -20,17 +21,17 @@ function startGame()
 function displayImages() {
     round++;
     document.getElementById('round').innerHTML = "Round " + round;
-    document.getElementById('category-selected').innerHTML = "Current Category: " + categoryName[0]; // need to change category name for each round. 
+    document.getElementById('category-selected').innerHTML = "Current Category: " + categoryName[round-1];
 
     for (let i = 0; i < 9; i++) {
         imageSelected[i] = false;
     }
 	imageLocation = [];
-	distributeImagesEvenly();
+	distributeImagesEvenly(allImageArrays[round-1]);
 }
 
-function distributeImagesEvenly() {
-    let halfLength = imageRound1.length / 2;
+function distributeImagesEvenly(array) {
+    let halfLength = array.length / 2;
 	let realCount = 0;
 
     for (let i = 0; i < 9; i++) {
@@ -38,7 +39,7 @@ function distributeImagesEvenly() {
         let randomImageNum = getRandomImageNumber(isRealImage, halfLength);
 
         imageLocation[i] = randomImageNum;
-        document.getElementById("image" + (i + 1)).src = imageRound1[randomImageNum];
+        document.getElementById("image" + (i + 1)).src = array[randomImageNum];
         document.getElementById("image" + (i + 1)).style.border = "5px solid white";
 
         if (isRealImage) {
@@ -96,8 +97,8 @@ function submitCaptcha()
 	}
 	if(win)
 	{
-		document.getElementById('correct-or-incorrect').innerHTML = "You were correct";	
-		displayImages()		
+		document.getElementById('correct-or-incorrect').innerHTML = "You were correct!";	
+		displayImages();		
 	}
 	else
 	{
@@ -118,7 +119,7 @@ function getTimeRemaining(endtime)
 	return {total, seconds};
 }
 
-function initializeClock(id, endtime)
+function initializeClock(id, endtime) //timer taken from https://www.sitepoint.com/community/t/countdown-timer/358565/7
 {
 	deadline = new Date(Date.parse(new Date()) + 1 * 59 * 1000);
 	let clock = document.getElementById(id);
@@ -155,6 +156,11 @@ function resetGame()
 	lives = 3;
 	imageLocation = [];
     startGame();
+}
+
+function returnToHomepage()
+{
+	location.replace('index.html'); 
 }
 
 let deadline = new Date(Date.parse(new Date()) + 1 * 59 * 1000);
