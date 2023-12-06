@@ -1,44 +1,42 @@
 var imageSelected = []; 
-var categoryName = ["Animals"];
-var imageRound1 = ["parrot.png", "panda.jpg", "arctic fox.jpg", "bird.jpg", "chameleon.jpg", "tree.jpg", "branches.jpg", "tree 2.jpg", "branches.jpg", "tree 2.jpg"]; 
+var categoryName = ["Animals", "Modes of Transportation", "Crosswalks", "", "", "", "", "", "", ""];
+var imageRound1 = ["parrot.png", "panda.jpg", "arctic fox.jpg", "bird.jpg", "chameleon.jpg", "tree.jpg", "branches.jpg", "tree 2.jpg", "jungle.png", "snow.png"]; 
+var imageRound2 = ["car.png", "ferry.png", "plane.png", "train.png", "bus.png", "empty road.png", "cloudy sky.png", "tire.png", "pier.png", "railroad crossing.png"]; 
+var imageRound3 = ["crosswalk.png", "beatles.png", "suburb.png", "crosswalk.png", "crosswalk.png", "empty suburb.png", "empty suburb.png", "empty suburb.png", "empty suburb.png", "empty suburb.png"];
+var allImageArrays = [imageRound1, imageRound2, imageRound3];
 var imageLocation = []; //saves location of image corresponding to the location in animal[]. will display in order of order in imageLocation
-//first half of array will be real animals, 2nd half will be not animals
-//this way we can find whether element is an animal or not by using array.length/2>num in the future
+//first half of array will be real images, 2nd half will be not part of category
 
 var leaderboardData = [];
 
 var round = 0;
 var lives = 3;
 var timeInterval;
+var gameEnded = false;
 
-function startGame()
+function changePage(loc)
 {
 	for(let i=0;i<9;i++)
 	{
 		imageSelected[i] = false;
 	}
-	location.replace('CaptchaGame.html'); 
-}
-
-function homepage()
-{
-	location.replace('index.html'); 
+	location.replace(loc); 
 }
 
 function displayImages() {
     round++;
     document.getElementById('round').innerHTML = "Round " + round;
-    document.getElementById('category-selected').innerHTML = "Current Category: " + categoryName[0]; // need to change category name for each round. 
+    document.getElementById('category-selected').innerHTML = "Current Category: " + categoryName[round-1];
 
     for (let i = 0; i < 9; i++) {
         imageSelected[i] = false;
     }
 	imageLocation = [];
-	distributeImagesEvenly();
+	distributeImagesEvenly(allImageArrays[round-1]);
 }
 
-function distributeImagesEvenly() {
-    let halfLength = imageRound1.length / 2;
+function distributeImagesEvenly(array) {
+    let halfLength = array.length / 2;
 	let realCount = 0;
 
     for (let i = 0; i < 9; i++) {
@@ -46,7 +44,7 @@ function distributeImagesEvenly() {
         let randomImageNum = getRandomImageNumber(isRealImage, halfLength);
 
         imageLocation[i] = randomImageNum;
-        document.getElementById("image" + (i + 1)).src = imageRound1[randomImageNum];
+        document.getElementById("image" + (i + 1)).src = array[randomImageNum];
         document.getElementById("image" + (i + 1)).style.border = "5px solid white";
 
         if (isRealImage) {
@@ -89,31 +87,33 @@ function imageClicked(str) {
 
 function submitCaptcha()
 {
-	
-	let win = true;
-	for(let i=0;i<9;i++)
+	if(!gameEnded) //only can submit if game is not over
 	{
-		if(imageLocation[i]<imageRound1.length/2 && !imageSelected[i]) //image is real & user said not real
+		let win = true;
+		for(let i=0;i<9;i++)
 		{
-				win = false;
+			if(imageLocation[i]<imageRound1.length/2 && !imageSelected[i]) //image is real & user said not real
+			{
+					win = false;
+			}
+			if(imageLocation[i]>=imageRound1.length/2 && imageSelected[i]) //image is fake & user said  real
+			{
+					win = false;
+			}
 		}
-		if(imageLocation[i]>=imageRound1.length/2 && imageSelected[i]) //image is fake & user said  real
+		if(win)
 		{
-				win = false;
+			document.getElementById('correct-or-incorrect').innerHTML = "You were correct!";	
+			displayImages();		
 		}
-	}
-	if(win)
-	{
-		document.getElementById('correct-or-incorrect').innerHTML = "You were correct";	
-		displayImages()		
-	}
-	else
-	{
-		lives--;
-		document.getElementById('correct-or-incorrect').innerHTML = "You were incorrect. "+lives+" lives remain.";
-		if(lives<=0)
-		{ 
-			endGame();
+		else
+		{
+			lives--;
+			document.getElementById('correct-or-incorrect').innerHTML = "You were incorrect. "+lives+" lives remain.";
+			if(lives<=0)
+			{ 
+				endGame();
+			}
 		}
 	}
 }
@@ -126,7 +126,7 @@ function getTimeRemaining(endtime)
 	return {total, seconds};
 }
 
-function initializeClock(id, endtime)
+function initializeClock(id, endtime) //timer taken from https://www.sitepoint.com/community/t/countdown-timer/358565/7
 {
 	deadline = new Date(Date.parse(new Date()) + 1 * 59 * 1000);
 	let clock = document.getElementById(id);
@@ -147,6 +147,7 @@ function initializeClock(id, endtime)
 }
 
 function endGame() {
+	gameEnded = true;
 	clearInterval(timeInterval);
     document.getElementById('end-game-message').innerHTML = "Time's up! You've completed " + (round - 1) + " captchas in 60 seconds! Try again?";
     document.getElementById("reset").style.display = "block";
@@ -155,19 +156,21 @@ function endGame() {
 
 function resetGame() 
 {
+	gameEnded = false;
+	document.getElementById('correct-or-incorrect').innerHTML = "";
 	document.getElementById('end-game-message').innerHTML = "";
 	document.getElementById("reset").style.display = "none";
 	document.getElementById("homepage").style.display = "none";
-	round = 0;
-	initializeClock('clockdiv', deadline); //need to reset timer - not functional yet
+	round = 0; //vars are not resetting
 	lives = 3;
-	imageLocation = [];
+	deadline = new Date(Date.parse(new Date()) + 1 * 59 * 1000);
+	initializeClock('clockdiv', deadline); //need to reset timer - not functional yet
     startGame();
 }
 
 function navigateToLeaderboard() {
 	leaderboardData.push({ rank: 1, nickname: 'Matador', round: round });
-	localStorage.setItem('leaderboardData', JSON.stringify(leaderboardData));
+	localStorage.setItem('leaderboardData', JSON.stringify(leaderboardData)); 
 	location.replace('Leaderboard.html'); 
 }
 document.addEventListener('DOMContentLoaded', function() {
@@ -176,16 +179,16 @@ document.addEventListener('DOMContentLoaded', function() {
 	if (data) {	    
 		updateLeaderboard(JSON.parse(data));
 		// Clear the storage if you don't need the data anymore
-		localStorage.removeItem('leaderboardData');
+		//localStorage.removeItem('leaderboardData');
 	}
 });
 
 function updateLeaderboard(data) {
 	var table = document.getElementById('leaderboard');
 	// Clear existing table rows, except for the header
-	while(table.rows.length > 1) {
-		table.deleteRow(1);
-	}
+//	while(table.rows.length > 1) {
+//		table.deleteRow(1);
+//	}
 	// Populate the table with new data
 	for(var i = 0; i < data.length; i++) {
 		var row = table.insertRow(-1);
@@ -198,6 +201,7 @@ function updateLeaderboard(data) {
 		entry3.textContent = data[i].round;
 	}
 }
+
 
 let deadline = new Date(Date.parse(new Date()) + 1 * 59 * 1000);
 initializeClock('clockdiv', deadline);
