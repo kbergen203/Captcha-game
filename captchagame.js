@@ -1,10 +1,12 @@
 var imageSelected = []; 
-var categoryName = ["Animals", "Modes of Transportation", "", "", "", "", "", "", "", ""];
-var imageRound1 = ["parrot.png", "panda.jpg", "arctic fox.jpg", "bird.jpg", "chameleon.jpg", "tree.jpg", "branches.jpg", "tree 2.jpg", "jungle.png", "snow.png"]; 
-var imageRound2 = ["car.png", "ferry.png", "plane.png", "train.png", "bus.png", "empty road.png", "cloudy sky.png", "tire.png", "pier.png", "railroad crossing.png"]; 
-var allImageArrays = [imageRound1, imageRound2];
+var categoryName = ["Animals"];
+var imageRound1 = ["parrot.png", "panda.jpg", "arctic fox.jpg", "bird.jpg", "chameleon.jpg", "tree.jpg", "branches.jpg", "tree 2.jpg", "branches.jpg", "tree 2.jpg"]; 
 var imageLocation = []; //saves location of image corresponding to the location in animal[]. will display in order of order in imageLocation
-//first half of array will be real images, 2nd half will be not part of category
+//first half of array will be real animals, 2nd half will be not animals
+//this way we can find whether element is an animal or not by using array.length/2>num in the future
+
+var leaderboardData = [];
+
 var round = 0;
 var lives = 3;
 var timeInterval;
@@ -18,20 +20,25 @@ function startGame()
 	location.replace('CaptchaGame.html'); 
 }
 
+function homepage()
+{
+	location.replace('index.html'); 
+}
+
 function displayImages() {
     round++;
     document.getElementById('round').innerHTML = "Round " + round;
-    document.getElementById('category-selected').innerHTML = "Current Category: " + categoryName[round-1];
+    document.getElementById('category-selected').innerHTML = "Current Category: " + categoryName[0]; // need to change category name for each round. 
 
     for (let i = 0; i < 9; i++) {
         imageSelected[i] = false;
     }
 	imageLocation = [];
-	distributeImagesEvenly(allImageArrays[round-1]);
+	distributeImagesEvenly();
 }
 
-function distributeImagesEvenly(array) {
-    let halfLength = array.length / 2;
+function distributeImagesEvenly() {
+    let halfLength = imageRound1.length / 2;
 	let realCount = 0;
 
     for (let i = 0; i < 9; i++) {
@@ -39,7 +46,7 @@ function distributeImagesEvenly(array) {
         let randomImageNum = getRandomImageNumber(isRealImage, halfLength);
 
         imageLocation[i] = randomImageNum;
-        document.getElementById("image" + (i + 1)).src = array[randomImageNum];
+        document.getElementById("image" + (i + 1)).src = imageRound1[randomImageNum];
         document.getElementById("image" + (i + 1)).style.border = "5px solid white";
 
         if (isRealImage) {
@@ -97,8 +104,8 @@ function submitCaptcha()
 	}
 	if(win)
 	{
-		document.getElementById('correct-or-incorrect').innerHTML = "You were correct!";	
-		displayImages();		
+		document.getElementById('correct-or-incorrect').innerHTML = "You were correct";	
+		displayImages()		
 	}
 	else
 	{
@@ -119,7 +126,7 @@ function getTimeRemaining(endtime)
 	return {total, seconds};
 }
 
-function initializeClock(id, endtime) //timer taken from https://www.sitepoint.com/community/t/countdown-timer/358565/7
+function initializeClock(id, endtime)
 {
 	deadline = new Date(Date.parse(new Date()) + 1 * 59 * 1000);
 	let clock = document.getElementById(id);
@@ -158,9 +165,38 @@ function resetGame()
     startGame();
 }
 
-function returnToHomepage()
-{
-	location.replace('index.html'); 
+function navigateToLeaderboard() {
+	leaderboardData.push({ rank: 1, nickname: 'Matador', round: round });
+	localStorage.setItem('leaderboardData', JSON.stringify(leaderboardData));
+	location.replace('Leaderboard.html'); 
+}
+document.addEventListener('DOMContentLoaded', function() {
+	// Check if the leaderboardData is present in localStorage
+	var data = localStorage.getItem('leaderboardData');
+	if (data) {	    
+		updateLeaderboard(JSON.parse(data));
+		// Clear the storage if you don't need the data anymore
+		localStorage.removeItem('leaderboardData');
+	}
+});
+
+function updateLeaderboard(data) {
+	var table = document.getElementById('leaderboard');
+	// Clear existing table rows, except for the header
+	while(table.rows.length > 1) {
+		table.deleteRow(1);
+	}
+	// Populate the table with new data
+	for(var i = 0; i < data.length; i++) {
+		var row = table.insertRow(-1);
+		var entry1 = row.insertCell(0);
+		var entry2 = row.insertCell(1);
+		var entry3 = row.insertCell(2);
+	
+		entry1.textContent = data[i].rank;
+		entry2.textContent = data[i].nickname;
+		entry3.textContent = data[i].round;
+	}
 }
 
 let deadline = new Date(Date.parse(new Date()) + 1 * 59 * 1000);
