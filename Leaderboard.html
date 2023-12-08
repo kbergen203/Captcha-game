@@ -34,14 +34,14 @@
   </head>
   <body>
 	<h2>Leaderboard</h2>
+
 	<table id="leaderboard">
 		<tr><th>Rank</th><th>Nickname</th><th>Round</th></tr>
 	</table>
 	
 	<div style="margin-top: 20px;">
-		<a id = "clearLeaderBoard" href="javascript:void(0);" onclick="clearLeaderBoard()" class="button"> Clear Leaderboard</a>
-		<a href="CaptchaGame.html" class="button">Start Game</a>
-		<a href="index.html" class="button">Homepage</a>
+		<button onclick="changePage('CaptchaGame.html')">Start Game</button> 
+		<button onclick="changePage('index.html')">Homepage</button>
 	</div>
 	<script src = "captchagame.js"></script>
 	</body>
