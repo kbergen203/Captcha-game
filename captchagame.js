@@ -1,47 +1,44 @@
 var imageSelected = []; 
-var categoryName = ["Animals", "Modes of Transportation", "Crosswalks", "", "", "", "", "", "", ""];
-var imageRound1 = ["parrot.png", "panda.jpg", "arctic fox.jpg", "bird.jpg", "chameleon.jpg", "tree.jpg", "branches.jpg", "tree 2.jpg", "jungle.png", "snow.png"]; 
-var imageRound2 = ["car.png", "ferry.png", "plane.png", "train.png", "bus.png", "empty road.png", "cloudy sky.png", "tire.png", "pier.png", "railroad crossing.png"]; 
-var imageRound3 = ["crosswalk.png", "beatles.png", "suburb.png", "crosswalk.png", "crosswalk.png", "empty suburb.png", "empty suburb.png", "empty suburb.png", "empty suburb.png", "empty suburb.png"];
-var allImageArrays = [imageRound1, imageRound2, imageRound3];
-var imageLocation = []; //saves location of image corresponding to the location in animal[]. will display in order of order in imageLocation
-//first half of array will be real images, 2nd half will be not part of category
+var categoryName = ["Animals"];
+var imageRound1 = ["parrot.png", "panda.jpg", "arctic fox.jpg", "bird.jpg", "chameleon.jpg", "tree.jpg", "branches.jpg", "tree 2.jpg", "branches.jpg", "tree 2.jpg"]; 
+var imageLocation = []; 
+//saves location of image corresponding to the location in animal[]. will display in order of order in imageLocation
+//first half of array will be real animals, 2nd half will be not animals
+//this way we can find whether element is an animal or not by using array.length/2>num in the future
 
 var leaderboardData = [];
 
 var round = 0;
 var lives = 3;
 var timeInterval;
-var gameEnded = false;
-
 
 function displayImages() {
     round++;
-    if(round>=10) 
-    {
-		endGame();
-		round--;
-	}
     document.getElementById('round').innerHTML = "Round " + round;
-    document.getElementById('category-selected').innerHTML = "Current Category: " + categoryName[round-1];
+    document.getElementById('category-selected').innerHTML = "Current Category: " + categoryName[0]; // need to change category name for each round. 
 
     for (let i = 0; i < 9; i++) {
         imageSelected[i] = false;
-        imageLocation[i] = null;
     }
-	distributeImagesEvenly(allImageArrays[round-1]);
+	imageLocation = [];
+	distributeImagesEvenly();
 }
 
-function distributeImagesEvenly(array) {
-    let halfLength = array.length / 2;
+function distributeImagesEvenly() {
+    let halfLength = imageRound1.length / 2;
 	let realCount = 0;
 
+	let isRealImage;
     for (let i = 0; i < 9; i++) {
-        let isRealImage = realCount < halfLength && Math.random() < 0.5;
+		if(	realCount < halfLength && Math.random() < 0.5)
+			isRealImage = true;
+		else 
+			isRealImage = false;
+		
         let randomImageNum = getRandomImageNumber(isRealImage, halfLength);
 
         imageLocation[i] = randomImageNum;
-        document.getElementById("image" + (i + 1)).src = array[randomImageNum];
+        document.getElementById("image" + (i + 1)).src = imageRound1[randomImageNum];
         document.getElementById("image" + (i + 1)).style.border = "5px solid white";
 
         if (isRealImage) {
@@ -61,10 +58,11 @@ function getRandomImageNumber(isReal, halfLength) {
 		end = imageRound1.length;
 	}
 
-    do {
+	let duplicatedImage = true;
+	for( let i = 0; duplicatedImage && i < 100; i++) {
         randomImageNum = Math.floor(Math.random() * (end - start)) + start;
-    } while (imageLocation.includes(randomImageNum));
-
+		duplicatedImage = imageLocation.includes(randomImageNum);
+	}
     return randomImageNum;
 }
 
@@ -73,7 +71,7 @@ function imageClicked(str) {
 	imageSelected[arrayIndex] = !imageSelected[arrayIndex];
 	if(imageSelected[arrayIndex])
 	{
-		document.getElementById(str).style.border = "5px solid blue";
+		document.getElementById(str).style.border = "5px solid skyblue";
 	}
 	else
 	{
@@ -84,33 +82,30 @@ function imageClicked(str) {
 
 function submitCaptcha()
 {
-	if(!gameEnded) //only can submit if game is not over
+	let win = true;
+	for(let i=0;i<9;i++)
 	{
-		let win = true;
-		for(let i=0;i<9;i++)
+		if(imageLocation[i]<imageRound1.length/2 && !imageSelected[i]) //image is real & user said not real
 		{
-			if(imageLocation[i]<imageRound1.length/2 && !imageSelected[i]) //image is real & user said not real
-			{
-					win = false;
-			}
-			if(imageLocation[i]>=imageRound1.length/2 && imageSelected[i]) //image is fake & user said  real
-			{
-					win = false;
-			}
+				win = false;
 		}
-		if(win)
+		if(imageLocation[i]>=imageRound1.length/2 && imageSelected[i]) //image is fake & user said  real
 		{
-			document.getElementById('correct-or-incorrect').innerHTML = "You were correct!";	
-			displayImages();		
+				win = false;
 		}
-		else
-		{
-			lives--;
-			document.getElementById('correct-or-incorrect').innerHTML = "You were incorrect. "+lives+" lives remain.";
-			if(lives<=0)
-			{ 
-				endGame();
-			}
+	}
+	if(win)
+	{
+		document.getElementById('correct-or-incorrect').innerHTML = "You were correct";
+		displayImages()		
+	}
+	else
+	{
+		lives--;
+		document.getElementById('correct-or-incorrect').innerHTML = "You were incorrect. "+lives+" lives remain.";
+		if(lives<=0)
+		{ 
+			endGame();
 		}
 	}
 }
@@ -123,19 +118,20 @@ function getTimeRemaining(endtime)
 	return {total, seconds};
 }
 
-function initializeClock(id, endtime) //timer taken from https://www.sitepoint.com/community/t/countdown-timer/358565/7
+function initializeClock(id, endtime)
 {
 	deadline = new Date(Date.parse(new Date()) + 1 * 59 * 1000);
 	let clock = document.getElementById(id);
 	let secondsSpan = clock.querySelector('.seconds');
 
 	function updateClock() 
-	{
+	{	
 		let t = getTimeRemaining(endtime);
 		secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
-
+	
 		if (t.total <= 0)
 		{
+			gameOver = true;
 			endGame();
 		}
 	}
@@ -144,9 +140,8 @@ function initializeClock(id, endtime) //timer taken from https://www.sitepoint.c
 }
 
 function endGame() {
-	gameEnded = true;
 	clearInterval(timeInterval);
-    document.getElementById("captcha").style.display = "none";
+	document.getElementById("captcha").style.display = "none";
     document.getElementById('end-game-message1').innerHTML = "Time's up! You've completed " + (round - 1) + " captchas in 60 seconds! Try again?";
     document.getElementById('end-game-message1').style.display = "block";
     document.getElementById("reset").style.display = "block";
@@ -157,7 +152,6 @@ function endGame() {
 
 function resetGame() 
 {
-	gameEnded = false;
 	document.getElementById("captcha").style.display = "block";
 	document.getElementById('correct-or-incorrect').innerHTML = "";
 	document.getElementById('end-game-message1').style.display = "none";
@@ -165,13 +159,15 @@ function resetGame()
 	document.getElementById('end-game-message2').style.display = "none";
 	document.getElementById("nicknameSection").style.display = "none";
 	document.getElementById("homepage-option").style.display = "none";
-	round = 0; 
+	round = 0;
 	lives = 3;
-	clearInterval(timeInterval);
-	let newDeadline = new Date(Date.parse(new Date()) + 1 * 59 * 1000);
-	initializeClock('clockdiv', newDeadline); //need to reset timer - not functional yet
-    displayImages();
+
+    location.replace('CaptchaGame.html');
+    //deadline = new Date(Date.parse(new Date()) + 1 * 59 * 1000);
+    //initializeClock('clockdiv', deadline);	
+	//displayImages();
 }
+
 function updateScore() {
     var data = localStorage.getItem('leaderboardData');
     if (data) 
@@ -196,20 +192,12 @@ function updateScore() {
     location.replace('LeaderBoard.html');
 }
 
-
 document.addEventListener('DOMContentLoaded', function() {
-	// Check if the leaderboardData is present in localStorage
 	var data = localStorage.getItem('leaderboardData');
 	if (data) {	    
 		updateLeaderboard(JSON.parse(data));
-		// Clear the storage if you don't need the data anymore
-		//localStorage.removeItem('leaderboardData');
 	}
 });
-function clearLeaderBoard() {
-	localStorage.removeItem('leaderboardData');
-    location.replace('LeaderBoard.html');
-}
 
 function updateLeaderboard(data) {
 	var table = document.getElementById('leaderboard');
@@ -228,6 +216,10 @@ function updateLeaderboard(data) {
 	}
 }
 
+function clearLeaderBoard() {
+	localStorage.removeItem('leaderboardData');
+    location.replace('LeaderBoard.html');
+}
 
 let deadline = new Date(Date.parse(new Date()) + 1 * 59 * 1000);
 initializeClock('clockdiv', deadline);

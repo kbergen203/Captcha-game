@@ -6,7 +6,7 @@
 	display: none;
 }
 h1{
-	color: purple;
+	color: #166483;
 	padding: 10px;
 	font-family: Didot;
 }
@@ -66,8 +66,8 @@ h1{
 	width: 150px;
     display: inline-block;
     padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
+    background-color: skyblue;
+    color: #166483;
     text-align: center;
     text-decoration: none;
     border-radius: 5px;
