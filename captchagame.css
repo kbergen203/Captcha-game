@@ -2,6 +2,9 @@
 	font-family:sans-serif;
 	text-align: center;
 }
+#homepage{
+	display: none;
+}
 h1{
 	color: purple;
 	padding: 10px;
@@ -39,11 +42,33 @@ h1{
 }
 #reset{
 	display: none;
+	width: 150px;
 }
-#homepage{
+#end-game-message1{
 	display: none;
+}
+#end-game-message2{
+	display: none;
+}
+#nicknameSection{
+	display: none;
+}
+#homepage-option{
+	display: none;
+	width: 150px;
 }
 #myDiv{
 	width: 150px;
 	height: 100px;
+}
+
+.button {
+	width: 150px;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
 }
